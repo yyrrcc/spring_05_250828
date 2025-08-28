@@ -112,11 +112,12 @@ public class BoardDao {
 	// 글 번호에 해당되는 글 내용 가져오기
 	public BoardDto contentview(String bnum) {
 		updatehit(bnum); // 조회수 증가 함수 호출
-		String sql = "SELECT * FROM boardtbl WHERE bnum = " + bnum;
+		String sql = "SELECT * FROM boardtbl WHERE bnum = ?";
 		try {
 			Class.forName(drivername);
 			conn = DriverManager.getConnection(url, username, password);
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, bnum);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				boardDto = new BoardDto(rs.getInt("bnum"), rs.getString("btitle"), rs.getString("bcontent"), rs.getString("bname"), rs.getInt("bhit"), rs.getString("bdate"));
@@ -146,12 +147,13 @@ public class BoardDao {
 	
 	// 조회수 증가
 	public void updatehit(String bnum) {
-		String sql = "UPDATE boardtbl SET (bhit = bhit + 1) WHERE bnum = " + bnum;
+		String sql = "UPDATE boardtbl SET bhit = bhit + 1 WHERE bnum = ?";
 		
 		try {
 			Class.forName(drivername);
 			conn = DriverManager.getConnection(url, username, password);
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, bnum);
 			pstmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
